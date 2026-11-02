@@ -71,7 +71,7 @@ Claude Code replaces `$0`, `$1` and so on in a `SKILL.md` with the words of the 
 
 ## Agnosticism
 
-Skills say "the tracker" and "the forge" and take every concrete operation from the project's configuration. Only the built-in guides (`skills/lifecycle/setup-rogs/assets/tracker-*.md` and `assets/forge-*.md`) name a tracker, a forge, their CLIs or their MCP tools. `setup-rogs/SKILL.md` and `setup-rogs/references/explore.md` may name the built-in guides when offering them, and a `## Sources` section may cite a vendor's documentation. The plan reviewer guides (`assets/reviewer-*.md`) are the only place that gives an agent CLI's flags; `review-plan` runs whatever command the project's `## Plan review` section holds.
+Skills say "the tracker" and "the forge" and take every concrete operation from the project's configuration. Only the built-in guides (`skills/lifecycle/setup-rogs/assets/tracker-*.md` and `assets/forge-*.md`) name a tracker, a forge, their CLIs or their MCP tools. `setup-rogs/SKILL.md` and `setup-rogs/references/explore.md` may name the built-in guides when offering them, and a `## Sources` section may cite a vendor's documentation. The plan reviewer guides (`assets/reviewer-*.md`) are the only place that gives an agent CLI's flags; `review-plan` runs whatever command the project's `## Plan review` section holds. The one other place that knows a harness's session storage and CLI commands is retro's `scripts/sessions.mjs`, with its tests.
 
 ## Configuration contract
 

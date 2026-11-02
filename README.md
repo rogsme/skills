@@ -105,7 +105,7 @@ User-invoked:
 
 - [improve-codebase-architecture](skills/engineering/improve-codebase-architecture/SKILL.md): scan the codebase for shallow modules, present the deepening opportunities as a visual HTML report, then grill through the one you pick.
 - [grill-me](skills/engineering/grill-me/SKILL.md): grill a plan or design in rounds until every decision is settled, without writing any docs.
-- [retro](skills/engineering/retro/SKILL.md): run a retrospective on a coding session and suggest changes to the agent's environment (navigation pointers, automated checks, review standards, tool economy), most severe first.
+- [retro](skills/engineering/retro/SKILL.md): run a retrospective on every coding session in a worktree, across `/new` and across harnesses, and suggest changes to the agent's environment (navigation pointers, automated checks, review standards, tool economy), most severe first.
 
 Model-invoked:
 

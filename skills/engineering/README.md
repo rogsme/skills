@@ -6,7 +6,7 @@ Skills for everyday code work. Each one runs on its own, and the lifecycle skill
 
 - [improve-codebase-architecture](./improve-codebase-architecture/SKILL.md): scan the codebase for shallow modules, present the deepening opportunities as a visual HTML report, then grill through the one you pick.
 - [grill-me](./grill-me/SKILL.md): grill a plan or design in rounds until every decision is settled, without writing any docs.
-- [retro](./retro/SKILL.md): run a retrospective on a coding session and suggest changes to the agent's environment (navigation pointers, automated checks, review standards, tool economy), most severe first.
+- [retro](./retro/SKILL.md): run a retrospective on every coding session in a worktree, across `/new` and across harnesses, and suggest changes to the agent's environment (navigation pointers, automated checks, review standards, tool economy), most severe first.
 
 ## Model-invoked
 
