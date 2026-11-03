@@ -54,7 +54,7 @@ Status: SETUP_REQUIRED
 
 When the check reports files missing here that exist in the main worktree (the first entry of `git worktree list --porcelain`), the second line says instead: "The configuration exists in <path> but not on this branch. Commit `docs/agents/` to the base branch, then merge the base into this branch." When it reports a version, the second line says: "The configuration is version <n>; this skill expects version 1.", followed by "Run /setup-rogs here to update it." for an older version or "Run `npx skills update` to update the installed skills." for a newer one.
 
-From here on, "the tracker", "the forge" and every operation named in backticks (`load`, `list-in-flight`, ...) mean what those files define, under their operating rules. The tracker stays read-only for this whole skill, apart from the state moves in step 2, the comments [Blocked tickets](#blocked-tickets) asks for, and, in an autonomous run, the `## Autonomous run` comment. Any stop below that names no status of its own ends with `Status: BLOCKED` and a one-line `Reason:`.
+From here on, "the tracker", "the forge" and every operation named in backticks (`load`, `list-in-flight`, ...) mean what those files define, under their operating rules. The tracker stays read-only for this whole skill, apart from the state moves in step 2, the comments [Blocked tickets](#blocked-tickets) asks for, and, in an autonomous run, the `## Autonomous run` comment. Any stop below that names no status of its own ends with `Status: BLOCKED` and a one-line `Reason:`. Ending a turn to wait for a background task this run started, such as a CI watch, is not a stop: write no status line, and go on when the task reports back.
 
 ## 1. Verify the ticket worktree
 
@@ -168,7 +168,7 @@ An autonomous run is one whose request says "This run is autonomous". Follow `##
 
 ## Blocked tickets
 
-A ticket is blocked while something outside this session has to happen before its work can go on: another ticket landing, a decision being made, or work in flight that would conflict. A question the user can answer here, or a problem with the run itself, does not block the ticket.
+A ticket is blocked while something outside this session has to happen before its work can go on: another ticket landing, a decision being made, or work in flight that would conflict. A question the user can answer here, or a problem with the run itself, does not block the ticket. Waiting on CI is neither: keep waiting.
 
 To mark the ticket blocked, `transition` every member to `blocked`, or keep the states when `## States` maps none, and post a `## Blocked` comment on the lead with `comment`, with a pointer naming the lead on each rider. The comment names each blocker with its evidence, what would clear it, and the state each member had. Then stop with `Status: BLOCKED` and a `Reason:` that names the blockers.
 
