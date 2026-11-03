@@ -34,26 +34,44 @@ Commit those files to the base branch before cutting ticket worktrees. Run `/set
 
 ## The ticket lifecycle
 
+```mermaid
+flowchart TD
+  create[["create-ticket<br/>audits the code, then drafts<br/>and creates tickets"]]
+  suggest[["suggest-tickets<br/>picks ready tickets that<br/>can run side by side"]]
+  worktree(["You create a worktree:<br/>branch, directory name and<br/>lead ticket id are the same"])
+  start[["start-ticket<br/>moves the ticket to in-progress,<br/>investigates, plans<br/>calls review-plan, present-plan"]]
+  approve(["You approve the plan"])
+  work[["work-ticket<br/>implements, verifies, opens the<br/>pull request, exact-head CI, handoff<br/>calls commit, tdd, simplify-branch,<br/>playwright-cli, create-pr"]]
+  review[["review-pr<br/>a fresh session, never the implementer<br/>findings pinned to the exact head"]]
+  address[["address-pr-review<br/>verifies, fixes or pushes back, replies<br/>at most two rounds<br/>calls commit, tdd, diagnosing-bugs"]]
+  verify[["verify-pr<br/>a fresh session, after a clean review<br/>runs the human verification steps,<br/>posts the evidence"]]
+  confirm(["You confirm the steps, from the<br/>evidence or by running them,<br/>and authorize the merge"])
+  finish[["finish-ticket<br/>merges, verifies,<br/>completes the tickets"]]
+  merged[("Merged, every ticket done")]
+
+  create -.-> suggest
+  suggest -.-> worktree
+  worktree --> start
+  start -->|"Status: AWAITING_APPROVAL"| approve
+  approve --> work
+  work -->|"Status: READY_FOR_REVIEW"| review
+  review -.->|"Verdict: CHANGES_REQUESTED,<br/>or the base moved"| address
+  address -.->|"Status: READY_FOR_REVIEW"| review
+  review -->|"Verdict: READY_FOR_HUMAN"| verify
+  verify -.->|"Verification: FAILED"| address
+  verify -->|"Verification: PASSED<br/>or INCOMPLETE"| confirm
+  confirm --> finish
+  finish -->|"Status: DONE"| merged
+
+  classDef you fill:#fde68a,stroke:#b45309,color:#1f2937
+  classDef skill fill:#bbf7d0,stroke:#15803d,color:#1f2937
+  classDef ext fill:#e5e7eb,stroke:#4b5563,color:#1f2937
+  class worktree,approve,confirm you
+  class create,suggest,start,work,review,address,verify,finish skill
+  class merged ext
 ```
-create-ticket       audit the code, then draft and create tickets
-suggest-tickets     pick ready tickets that can run side by side
-     |   you create a worktree: branch = directory name = lead ticket id
-start-ticket        move to in-progress, investigate, plan  Status: AWAITING_APPROVAL
-     |   you approve the plan
-work-ticket         implement, verify, pull request, exact-head CI, handoff
-                                                            Status: READY_FOR_REVIEW
-     |   a fresh session, never the implementer
-review-pr           findings pinned to the exact head
-                                    Verdict: CHANGES_REQUESTED | READY_FOR_HUMAN
-     |   when changes were requested or the base moved
-address-pr-review   verify, fix or push back, reply; at most two rounds
-                                                            Status: READY_FOR_REVIEW
-     |   a fresh session, after a clean review
-verify-pr           run the human verification steps, post the evidence
-                                       Verification: PASSED | FAILED | INCOMPLETE
-     |   you confirm the steps, from the evidence or by running them
-finish-ticket       merge, verify, complete the tickets     Status: DONE
-```
+
+A green box with double sides is a skill, and a rounded yellow box is a step you take. Solid arrows are the path a ticket takes when nothing goes wrong; dotted arrows are the optional skills and the fix loops. Each arrow out of a skill is the status line or verdict it ends with.
 
 - The lifecycle skills never call one another. Each ends with a status line, and you start the next stage: you approve the plan, run the human verification steps, and authorize the merge. They do call engineering skills: `commit` for every commit, `create-pr` to open the pull request, `simplify-branch` for the optional taste pass, `review-plan` to have the plan reviewed before you see it, `present-plan` for optional browser presentation, `tdd` and `diagnosing-bugs` where they apply.
 - The implementer never reviews its own change, the fixer never resolves review threads, the reviewer never writes to the tracker, and only `finish-ticket` merges.
@@ -140,7 +158,7 @@ Model-invoked:
 
 [tkt](https://git.rogs.me/rogs/tkt) is a terminal tool that runs the lifecycle's mechanical steps for you, such as creating a ticket's worktree and starting the agent for each stage. Its README covers installing and using it, and [its lifecycle guide](https://git.rogs.me/rogs/tkt/src/branch/master/docs/lifecycle.md) follows a ticket from the tracker to a merged pull request, with diagrams of how the skills, tkt and the other tools fit together.
 
-`tkt suggest` opens a tab where suggest-tickets runs, on a count or on a request in your own words, such as `tkt suggest five tickets tagged feedback`, and you start the picks you want from its report. `tkt auto` can also drive a ticket on its own until the pull request is ready for human verification. With `--approve-plan` it starts the ticket as an unattended run and approves the plan itself; it stops and notifies you when an agent asks a question. Where agent verification is on, it runs `verify-pr` after a clean review, and has the failed steps fixed and verified again. Where autonomous runs are on, `tkt auto --yolo` carries a ticket from start to merge with nobody watching: the skills decide what they would ask, record each decision as an assumption, stop at the repository's hard stops, and `finish-ticket` merges once `verify-pr` passed every step.
+`tkt agent` opens a chat in the terminal that drives every ticket from plain words, such as "start ACM-12", with a board of what needs you; `/web` opens the same chat on a web page, where each answer is a button. `tkt suggest` opens a tab where suggest-tickets runs, on a count or on a request in your own words, such as `tkt suggest five tickets tagged feedback`, and you start the picks you want from its report. `tkt auto` can also drive a ticket on its own until the pull request is ready for human verification. With `--auto-plan` it starts the ticket as an unattended run and approves the plan itself; it stops and notifies you when an agent asks a question. Where agent verification is on, it runs `verify-pr` after a clean review, and has the failed steps fixed and verified again. Where autonomous runs are on, `tkt auto --yolo` carries a ticket from start to merge with nobody watching: the skills decide what they would ask, record each decision as an assumption, stop at the repository's hard stops, and `finish-ticket` merges once `verify-pr` passed every step.
 
 ## Credits
 
