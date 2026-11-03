@@ -18,7 +18,7 @@ async function configuration(t, { review = false, presentation, heading = true }
   execFileSync("git", ["init", "-q"], { cwd: directory });
   await mkdir(path.join(directory, "docs/agents"), { recursive: true });
   const documents = {
-    "issue-tracker": "## Tracker\n## Operating rules\n## Operations\n### resolve\n### load\n### list-in-flight\n### comment\n### transition\n## States\n",
+    "issue-tracker": "## Tracker\n## Operating rules\n## Operations\n### resolve\n### load\n### list-in-flight\n### relate\n### comment\n### transition\n## States\n",
     forge: "## Forge\n",
     domain: "## Glossary\n## ADRs\n## Consumer rules\n## Recording decisions\n",
     workflow: "## Features\n| Feature | State |\n|---|---|\n" +

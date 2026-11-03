@@ -29,7 +29,7 @@ need() { f="docs/agents/${1}"; id="${2}"; shift 2
 has() { f="docs/agents/${1}"; shift; [ -f "$f" ] || return 0
   for h in "$@"; do grep -qxF -- "$h" "$f" || echo "$f: $h"; done; }
 on() { grep -qiE "^[|] *${1} *[|] *on *[|]" docs/agents/workflow.md 2>/dev/null; }
-need issue-tracker.md issue-tracker "## Tracker" "## Operating rules" "## Operations" "### resolve" "### load" "### list-in-flight" "### comment" "### transition" "## States"
+need issue-tracker.md issue-tracker "## Tracker" "## Operating rules" "## Operations" "### resolve" "### load" "### list-in-flight" "### relate" "### comment" "### transition" "## States"
 need forge.md forge "## Forge"
 need workflow.md workflow "## Features" "## Worktrees" "## Verification" "## Project rules"
 need domain.md domain "## Glossary" "## ADRs" "## Consumer rules" "## Recording decisions"
@@ -54,7 +54,7 @@ Status: SETUP_REQUIRED
 
 When the check reports files missing here that exist in the main worktree (the first entry of `git worktree list --porcelain`), the second line says instead: "The configuration exists in <path> but not on this branch. Commit `docs/agents/` to the base branch, then merge the base into this branch." When it reports a version, the second line says: "The configuration is version <n>; this skill expects version 1.", followed by "Run /setup-rogs here to update it." for an older version or "Run `npx skills update` to update the installed skills." for a newer one.
 
-From here on, "the tracker", "the forge" and every operation named in backticks (`load`, `list-in-flight`, ...) mean what those files define, under their operating rules. The tracker stays read-only for this whole skill, apart from the state moves in step 2, the comments [Blocked tickets](#blocked-tickets) asks for, and, in an autonomous run, the `## Autonomous run` comment. Any stop below that names no status of its own ends with `Status: BLOCKED` and a one-line `Reason:`. Ending a turn to wait for a background task this run started, such as a CI watch, is not a stop: write no status line, and go on when the task reports back.
+From here on, "the tracker", "the forge" and every operation named in backticks (`load`, `list-in-flight`, ...) mean what those files define, under their operating rules. The tracker stays read-only for this whole skill, apart from the state moves in step 2, the comments and relations [Blocked tickets](#blocked-tickets) asks for, and, in an autonomous run, the `## Autonomous run` comment. Any stop below that names no status of its own ends with `Status: BLOCKED` and a one-line `Reason:`. Ending a turn to wait for a background task this run started, such as a CI watch, is not a stop: write no status line, and go on when the task reports back.
 
 ## 1. Verify the ticket worktree
 
@@ -83,7 +83,7 @@ Read every declared blocker and its current state. A blocked-by relation between
 
 Treat another ticket as a blocker only on concrete evidence: an unresolved prerequisite, a conditional discovery gate, a superseding decision, a contradictory requirement, or an in-flight implementation conflict that makes independent work unsafe. Similar topics or shared files alone are not blockers. A blocker stays unresolved until it reaches the `done` role, unless its ticket or an explicit decision says this ticket may proceed sooner. A canceled blocker is an open question, not a satisfied prerequisite.
 
-When the scan finds an unrecorded blocker, report the evidence in the plan; never add a relation while planning. When an unresolved blocker makes independent work unsafe, mark the ticket blocked as [Blocked tickets](#blocked-tickets) says. Ask before planning a ticket that is already `in-review`, `done`, `canceled`, or in a state `## States` does not list. Never change the assignee.
+When the scan finds an unrecorded blocker, report the evidence in the plan. When an unresolved blocker makes independent work unsafe, or the user names one, mark the ticket blocked as [Blocked tickets](#blocked-tickets) says; that is the only time this skill adds a relation. Ask before planning a ticket that is already `in-review`, `done`, `canceled`, or in a state `## States` does not list. Never change the assignee.
 
 Once the checks above pass, and before the investigation, `transition` every member that is `new`, `ready` or `blocked` to `in-progress` and read the states back, so the board shows the ticket started as soon as work on it does; [Blocked tickets](#blocked-tickets) says when a blocked one comes back. When the user drops the ticket instead of approving a plan, `transition` each member this run moved back to the state it had, or, for one that was blocked, to the state its `## Blocked` comment records.
 
@@ -170,7 +170,7 @@ An autonomous run is one whose request says "This run is autonomous". Follow `##
 
 A ticket is blocked while something outside this session has to happen before its work can go on: another ticket landing, a decision being made, or work in flight that would conflict. A question the user can answer here, or a problem with the run itself, does not block the ticket. Waiting on CI is neither: keep waiting.
 
-To mark the ticket blocked, `transition` every member to `blocked`, or keep the states when `## States` maps none, and post a `## Blocked` comment on the lead with `comment`, with a pointer naming the lead on each rider. The comment names each blocker with its evidence, what would clear it, and the state each member had. Then stop with `Status: BLOCKED` and a `Reason:` that names the blockers.
+To mark the ticket blocked, `transition` every member to `blocked`, or keep the states when `## States` maps none, and post a `## Blocked` comment on the lead with `comment`, with a pointer naming the lead on each rider. The comment names each blocker with its evidence, what would clear it, and the state each member had. When a blocker is another ticket, give each member a blocked-by relation to it with `relate`, replacing a related relation the pair already has when the tracker keeps one relation per pair, and read the relations back; when `relate` is not `Supported`, the comment stands alone. Then stop with `Status: BLOCKED` and a `Reason:` that names the blockers.
 
 A member in `blocked` comes back once every blocker its `## Blocked` comment names is cleared: `transition` it to the state this run works in (`in-progress` in start-ticket and work-ticket, `in-review` in address-pr-review), and post an `## Unblocked` comment beside the `## Blocked` one that says what cleared each blocker. When a blocker is still open, refresh the `## Blocked` comment and stop as above. Ask before working on a member in `blocked` that has no `## Blocked` comment.
 

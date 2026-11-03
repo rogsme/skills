@@ -157,7 +157,8 @@ R is required. F is required only when the feature it belongs to is on. A dash m
 | issue-tracker `## Tracker`, `## Operating rules`, `## States` | R | R | R | R | R | R | - | R |
 | issue-tracker `resolve`, `load` | R | R | R | R | R | R | - | R |
 | issue-tracker `search` | R | - | - | - | - | - | - | R |
-| issue-tracker `metadata`, `create`, `update`, `relate` | R | - | - | - | - | - | - | - |
+| issue-tracker `metadata`, `create`, `update` | R | - | - | - | - | - | - | - |
+| issue-tracker `relate` | R | - | R | R | - | R | - | - |
 | issue-tracker `## Labels and priority`, `## Ticket conventions` | R | R | - | - | - | - | - | - |
 | issue-tracker `list-in-flight` | - | R | R | R | - | - | - | - |
 | issue-tracker `list-ready` | - | R | - | - | - | - | - | - |
@@ -202,7 +203,7 @@ An operation marked `Capability: Unsupported` still satisfies the heading check.
 | The tracker cannot attach files | Upload captures to the forge only; the tracker comment links the forge URLs. |
 | The forge cannot attach files | Upload captures to the tracker only, and link them from the pull request when the tracker's URLs are permanent; otherwise treat it as neither side being able to attach. |
 | Neither can attach | Keep captures in a temporary directory outside the repository, list their paths, and mark every visible criterion as needing human confirmation. |
-| No relations | Use the `Blocked by:` and `Delivers with:` lines in ticket descriptions alone. |
+| No relations | Use the `Blocked by:` and `Delivers with:` lines in ticket descriptions alone. A skill that marks a ticket blocked records the blocker in its `## Blocked` comment only. |
 | No native states | Use whatever `## States` maps the roles to (labels, a project field, open and closed). |
 | Comments cannot be edited | Post a new comment that links the one it supersedes. |
 | Search cannot see archived tickets | Search what is visible and state the limit in the duplicate report. |
