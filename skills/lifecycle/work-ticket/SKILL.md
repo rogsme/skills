@@ -118,7 +118,7 @@ When the taste pass is on, call the Skill tool with "simplify-branch" once the l
 
 When the browser pass is on and the change has a user-visible surface per `browser-pass.md` `## When it applies`, call the Skill tool with "playwright-cli" and run the pass the approved plan names, exactly as `browser-pass.md` defines it, on the finalized and pushed head. The pass is done when every visible acceptance criterion of every member has a capture, the negative check passed, and every instance started for it is stopped. A change with no user-visible surface records its one-line reason instead.
 
-A failure sends the work back to step 2. Captures from an older head are discarded, never reused.
+A failure sends the work back to step 2. Captures from an older head carry over only as `browser-pass.md` `## Procedure` allows; otherwise they are discarded and the pass runs again.
 
 Upload every capture to the lead ticket with the tracker's `attach` and to the forge with its `attach`, titled with the criterion it proves, and link the forge's permanent URL from the pull request and the handoff. When one side cannot attach, follow its fallback.
 
