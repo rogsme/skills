@@ -8,7 +8,7 @@ metadata:
 
 # Address review feedback
 
-Treat review comments as claims to verify, not instructions to apply blindly. Make the smallest justified fixes, push them before replying, and answer every feedback channel. The tracker stays read-only, apart from replacement captures and the moves [Blocked tickets](#blocked-tickets) describes.
+Treat review comments as claims to verify, not instructions to apply blindly. Make the smallest justified fixes, push them before replying, and answer every feedback channel. The tracker stays read-only, apart from replacement captures and the moves and relations [Blocked tickets](#blocked-tickets) describes.
 
 Every run first syncs the branch with its base (step 3), then performs at most two address rounds and stops. A request to address the review and a request to sync the pull request start the same run. A round is steps 4 to 8 against one head: collect the unanswered feedback, classify it, fix the accepted findings, push, wait for the exact-head CI, and reply. Step 9 decides whether a second round happens and enforces the cap.
 
@@ -31,7 +31,7 @@ need() { f="docs/agents/${1}"; id="${2}"; shift 2
 has() { f="docs/agents/${1}"; shift; [ -f "$f" ] || return 0
   for h in "$@"; do grep -qxF -- "$h" "$f" || echo "$f: $h"; done; }
 on() { grep -qiE "^[|] *${1} *[|] *on *[|]" docs/agents/workflow.md 2>/dev/null; }
-need issue-tracker.md issue-tracker "## Tracker" "## Operating rules" "## Operations" "### resolve" "### load" "### comment" "### transition" "## States"
+need issue-tracker.md issue-tracker "## Tracker" "## Operating rules" "## Operations" "### resolve" "### load" "### relate" "### comment" "### transition" "## States"
 need forge.md forge "## Forge" "## Operations" "### find-pr" "### push" "### read-pr" "### edit-pr" "### ci" "### feedback" "### reply" "### comment" "## CI gate" "## Pull requests"
 need workflow.md workflow "## Features" "## Worktrees" "## Verification" "## Commits" "## Sync" "## Project rules" "## Human verification"
 need domain.md domain "## Glossary" "## ADRs" "## Consumer rules" "## Recording decisions"
@@ -120,7 +120,7 @@ Fix each accepted issue at its shared root cause, with the smallest regression t
 
 Commit each fix with its test as one unit: state the exact paths, the constraints (never amend; no AI attribution and no co-author trailers unless `## Commits` says otherwise; never bypass a hook; leave every other path untouched) and the intent, then call the Skill tool with "commit" and confirm the commit with `git log`. Create no commit for a rejected or no-code-change comment.
 
-When the browser pass is on and an accepted fix changes what a page shows, rerun the affected part of the pass per `browser-pass.md` after the push below, upload the new captures to the lead ticket and to the forge with their `attach` operations, and point the pull request's screenshot links at them. Replacement captures and the moves into and out of `blocked` are the only tracker writes this skill makes.
+When the browser pass is on and an accepted fix changes what a page shows, rerun the affected part of the pass per `browser-pass.md` after the push below, upload the new captures to the lead ticket and to the forge with their `attach` operations, and point the pull request's screenshot links at them. Replacement captures and the moves into and out of `blocked`, with their relations, are the only tracker writes this skill makes.
 
 After the fixes, run the format command and commit any intended changes it makes, then run the focused checks that prove the fixes. Reuse the pull request's CI gate instead of rerunning the full check locally.
 
@@ -180,7 +180,7 @@ An autonomous run is one whose request says "This run is autonomous". Follow `##
 
 A ticket is blocked while something outside this session has to happen before its work can go on: another ticket landing, a decision being made, or work in flight that would conflict. A question the user can answer here, or a problem with the run itself, does not block the ticket. Waiting on CI is neither: keep waiting.
 
-To mark the ticket blocked, `transition` every member to `blocked`, or keep the states when `## States` maps none, and post a `## Blocked` comment on the lead with `comment`, with a pointer naming the lead on each rider. The comment names each blocker with its evidence, what would clear it, and the state each member had. Then stop with `Status: BLOCKED` and a `Reason:` that names the blockers.
+To mark the ticket blocked, `transition` every member to `blocked`, or keep the states when `## States` maps none, and post a `## Blocked` comment on the lead with `comment`, with a pointer naming the lead on each rider. The comment names each blocker with its evidence, what would clear it, and the state each member had. When a blocker is another ticket, give each member a blocked-by relation to it with `relate`, replacing a related relation the pair already has when the tracker keeps one relation per pair, and read the relations back; when `relate` is not `Supported`, the comment stands alone. Then stop with `Status: BLOCKED` and a `Reason:` that names the blockers.
 
 A member in `blocked` comes back once every blocker its `## Blocked` comment names is cleared: `transition` it to the state this run works in (`in-progress` in start-ticket and work-ticket, `in-review` in address-pr-review), and post an `## Unblocked` comment beside the `## Blocked` one that says what cleared each blocker. When a blocker is still open, refresh the `## Blocked` comment and stop as above. Ask before working on a member in `blocked` that has no `## Blocked` comment.
 
