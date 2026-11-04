@@ -14,7 +14,7 @@ The lifecycle skills are general. Everything they need to know about one project
 | `docs/agents/pull-request.md` | `pull-request` | the repository has no pull request template of its own |
 | A `## Ticket lifecycle` block in `AGENTS.md` or `CLAUDE.md` | `block` | always |
 
-The files are prose for agents and people. Extra sections, notes and tables are welcome anywhere; the skills look up only the headings below and ignore the rest.
+The files are prose for agents and people. Extra sections, notes and tables are welcome anywhere. The skills read only the sections their preflight names, so an extra section or file reaches them only when one of those sends them to it, as an operation that says to use another one does. A note above a file's first section reaches no skill.
 
 ## Markers and versions
 
@@ -150,7 +150,7 @@ A `## Ticket lifecycle` section between the block markers, in the file both harn
 
 ## Which skill needs what
 
-R is required. F is required only when the feature it belongs to is on. A dash means the skill does not read it.
+R is required. F is required only when the feature it belongs to is on. A dash means the skill does not read it. Each skill's preflight checks its column, and prints exactly those sections for the skill to read.
 
 | Section | create-ticket | suggest-tickets | start-ticket | work-ticket | review-pr | address-pr-review | verify-pr | finish-ticket |
 |---|---|---|---|---|---|---|---|---|
@@ -189,10 +189,15 @@ R is required. F is required only when the feature it belongs to is on. A dash m
 | workflow `## Plan review` | - | - | F | - | - | - | - | - |
 | workflow `## Plan presentation` | - | - | F | - | - | - | - | - |
 | workflow `## Autonomous runs` | - | - | F | F | F | F | F | F |
-| workflow `## CI review` | - | - | - | - | F | - | F | F |
-| domain (all four headings) | R | - | R | R | R | R | - | - |
-| browser-pass (all four headings) | - | - | F | F | F | F | F | F |
-| pull-request (when `## Pull requests` points at it) | - | - | - | R | R | R | - | - |
+| workflow `## CI review` | - | - | - | - | F | F | F | F |
+| domain `## Glossary`, `## ADRs`, `## Consumer rules` | R | - | R | R | R | R | - | - |
+| domain `## Recording decisions` | - | - | - | R | - | - | - | - |
+| browser-pass `## When it applies` | - | - | F | F | F | F | - | F |
+| browser-pass `## Instances` | - | - | F | F | - | F | F | - |
+| browser-pass `## Procedure` | - | - | F | F | F | F | - | - |
+| browser-pass `## Captures` | - | - | F | F | F | F | F | - |
+| pull-request `## Review brief` (when `## Pull requests` points at it) | - | - | - | R | R | R | - | - |
+| pull-request `## Changelog` (when `## Pull requests` points at it) | - | - | - | - | F | F | - | - |
 
 An operation marked `Capability: Unsupported` still satisfies the heading check. The skill then follows the gap rules below, and stops with `Status: BLOCKED` when a required operation has no way forward.
 
@@ -216,9 +221,9 @@ An operation marked `Capability: Unsupported` still satisfies the heading check.
 
 ## Preflight (step 0 of every lifecycle skill)
 
-Each lifecycle skill runs this before any git, tracker or forge action. Its step 0 embeds a short `sh -c` check built from its column of the table above. For every file the skill needs, the check confirms that the file exists, that line 1 is the marker with version 1, that no `{{FILL:` text remains, and that every required heading exists as a whole line. Feature headings are checked only when `## Features` turns the feature on, and `pull-request.md` only when `## Pull requests` points at it. The check prints one line per problem and nothing when the configuration is complete. It is a script rather than an instruction to read the files, because a model reading prose can call an incomplete file complete.
+Each lifecycle skill runs this before any git, tracker or forge action. Its step 0 embeds a short `sh -c` check built from its column of the table above. For every file the skill needs, the check confirms that the file exists, that line 1 is the marker with version 1, that no `{{FILL:` text remains, and that every required heading exists as a whole line. Feature headings are checked only when `## Features` turns the feature on, and `pull-request.md` only when `## Pull requests` points at it. The check prints one line per problem. When there is none, it prints the sections it checked instead, grouped under a `==> docs/agents/<file> <==` line per file: each runs from its heading to the next heading of the same or a higher level outside code fences, and `## Operations` prints only its note, since the skill names each operation it uses. The skill reads those sections, and any other part of the configuration that one of them or a later step sends it to, such as the full `pull-request.md` when work-ticket writes a body. It is a script rather than an instruction to read the files, because a model reading prose can call an incomplete file complete, and because the whole configuration runs to about twice what one skill uses.
 
-When the check prints anything, the skill changes nothing and replies with exactly:
+When the check prints problem lines, the skill changes nothing and replies with exactly:
 
 ```
 rogs-skills is not configured for <skill> in this repository.
