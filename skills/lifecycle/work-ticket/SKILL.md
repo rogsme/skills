@@ -8,7 +8,7 @@ metadata:
 
 # Work an approved ticket
 
-Implement the approved plan through a verified pull request and a tracker handoff. The work is complete only when the pull request exists, its exact head passes the CI gate, and every ticket reads `in-review`; a local commit without the pull request is a partial state, not a finish.
+Implement the approved plan through a verified pull request and a tracker handoff. The work is complete only when the pull request exists, its exact head passes the CI gate, and every ticket reads `in-review`; a local commit without the pull request is a partial state, not a finish. The branch reaches the remote once, when create-pr publishes the pull request in step 7; after that, only a CI fix or a sync in step 8 pushes it, so the project's pre-push hook runs once for each head CI has to test.
 
 This skill grants permission to create the commits, push the branch and open the pull request the workflow needs. Its only tracker writes are the ones listed here: the plan comment with the `in-progress` transition of any member not there yet, the capture attachments, the `in-review` transition with the handoff comment, and the moves into and out of `blocked` with their comments and relations ([Blocked tickets](#blocked-tickets)). The user's approval of the plan lifts any earlier instruction that kept the tracker read-only for these writes; make them without asking again.
 
@@ -119,20 +119,20 @@ When the taste pass is on, call the Skill tool with "simplify-branch" once the l
 3. Confirm every intended change is committed and nothing unrelated is staged. Stop before syncing when the worktree is not safely clean.
 4. Sync per `## Sync`: merge the base. When the merge stops on conflicts, resolve each conflict from what both sides meant, under these constraints: this is a merge and stays one; stage only resolved paths; ask the user about any hunk that decides product behavior. Then conclude the merge with `git commit --no-edit` and confirm it in `git log`.
 5. When the sync changed the branch, rerun the complete verification.
-6. Immediately before pushing, fetch and require `<remote>/<base>` to be an ancestor of `HEAD`. When the base moved in the meantime (`## CI gate` names the automation that moves it), repeat item 4 first.
-7. `push`. Never force-push.
+
+The finalized branch stays local. Its first push is create-pr's, in step 7.
 
 ## 6. Verify in the browser
 
-When the browser pass is on and the change has a user-visible surface per `browser-pass.md` `## When it applies`, call the Skill tool with "playwright-cli" and run the pass the approved plan names, exactly as `browser-pass.md` defines it, on the finalized and pushed head. The pass is done when every visible acceptance criterion of every member has a capture, the negative check passed, and every instance started for it is stopped. A change with no user-visible surface records its one-line reason instead.
+When the browser pass is on and the change has a user-visible surface per `browser-pass.md` `## When it applies`, call the Skill tool with "playwright-cli" and run the pass the approved plan names, exactly as `browser-pass.md` defines it, on the finalized head. The pass runs against local instances, so it runs before the branch is pushed, even where the project's `browser-pass.md` still says "pushed head". The pass is done when every visible acceptance criterion of every member has a capture, the negative check passed, and every instance started for it is stopped. A change with no user-visible surface records its one-line reason instead.
 
-A failure sends the work back to step 2. Captures from an older head carry over only as `browser-pass.md` `## Procedure` allows; otherwise they are discarded and the pass runs again.
+A failure sends the work back to step 2, and the fix stays local like the rest of the branch. Captures from an older head carry over only as `browser-pass.md` `## Procedure` allows; otherwise they are discarded and the pass runs again.
 
 Upload every capture to the lead ticket with the tracker's `attach` and to the forge with its `attach`, titled with the criterion it proves, and link the forge's permanent URL from the pull request and the handoff. When one side cannot attach, follow its fallback.
 
 ## 7. Create or reuse the pull request
 
-Follow [references/open-pr.md](references/open-pr.md): write the body in the format `## Pull requests` names, call the Skill tool with "create-pr" with the handover it lists, then verify every field with `read-pr`. The create-pr skill finds an existing pull request before anything else, publishes at most once, and assigns the configured assignee or nobody.
+Follow [references/open-pr.md](references/open-pr.md): pass its sync gate, write the body in the format `## Pull requests` names, call the Skill tool with "create-pr" with the handover it lists, then verify every field with `read-pr`. The sync gate runs right before the handover, so the pull request opens on the current base and is ready for review, and create-pr's push is the run's first. The create-pr skill finds an existing pull request before anything else, publishes at most once, and assigns the configured assignee or nobody.
 
 Write the body from the final diff and the actual verification results:
 
@@ -151,9 +151,9 @@ Apply `## CI gate`. When the diff touches none of its path filters, no checks is
 
 Otherwise record the pull request's head SHA and wait with `ci`. Refresh the pull request afterwards and require the successful gate checks to belong to that exact SHA. Fetch the base, record its SHA, and require it to be an ancestor of the head, so the checks cover the current base plus the change.
 
-- Fix deterministic failures yourself: reproduce with the smallest relevant local command, commit the fix through "commit", push, and wait again for the new head. When the failing output does not show the cause, call the Skill tool with "diagnosing-bugs" before you change code.
+- Fix deterministic failures yourself, as one batch per head: read every failing gate check of the head, reproduce each with the smallest relevant local command, and commit the fixes through "commit". Then pass the sync gate in [references/open-pr.md](references/open-pr.md), `push` once, and wait again for the new head. When the failing output does not show the cause, call the Skill tool with "diagnosing-bugs" before you change code.
 - Report infrastructure, permission, quota or unavailable-service failures with `Status: BLOCKED`, the check URL and the exact partial state. Never ask the user to diagnose ordinary code failures.
-- Require the pull request to be mergeable before the handoff. When the base advanced or the pull request conflicts, sync as in step 5 without force-pushing, rerun the verification, push, and wait for the new head's checks.
+- Require the pull request to be mergeable before the handoff. When the base advanced or the pull request conflicts, pass the sync gate, which merges the base as in step 5 and reruns the verification, then push the merge together with any pending fixes. Never force-push. Wait for the new head's checks.
 
 Never move a ticket to `in-review` while the current head's gate is pending, failing or stale.
 
@@ -183,7 +183,7 @@ An autonomous run is one whose request says "This run is autonomous". Follow `##
 - Where step 1 would ask, about a model other than the plan's, a blocker relation or overlapping changes, go on with this session's model and record it, report the unrecorded blocker in the `## Blocked` comment instead of adding it, and stop with `Status: BLOCKED` on overlapping changes.
 - A material unknown, a plan change or a merge-conflict hunk that decides product behavior is settled as `## Autonomous runs` says, when the approved plan's intent covers it. Otherwise stop with `Status: BLOCKED`.
 - A taste-pass finding that would change the plan stays unapplied and goes into the handoff.
-- Before the push in step 5, check the branch's diff against the hard stops. When it touches one, mark the ticket blocked as [Blocked tickets](#blocked-tickets) says, naming the hard stop, and push nothing.
+- Before the sync gate in step 7, check the branch's diff against the hard stops. When it touches one, mark the ticket blocked as [Blocked tickets](#blocked-tickets) says, naming the hard stop, and push nothing.
 - The pull request body carries an `## Assumptions` section after `## Summary`: every assumption from the plan and from implementation, each with its evidence. The handoff repeats it.
 
 ## Blocked tickets

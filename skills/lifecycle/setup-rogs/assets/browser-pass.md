@@ -21,7 +21,7 @@ The last step before a pull request opens: drive the real application with the `
 
 ## Procedure
 
-1. Run the pass on the finalized, pushed head.
+1. Run the pass on the finalized head, before the branch is pushed.
 2. Walk every acceptance criterion with a visible result, on the page and persona the ticket names, against the real backend.
 3. Run one negative check: for a gated surface, open it as a less privileged persona and confirm the refusal; otherwise confirm a neighboring behavior the change could have broken.
 4. Treat a failure as a bug in the branch: fix it, rerun the checks, and walk the pass again from the top.
