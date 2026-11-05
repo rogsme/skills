@@ -167,6 +167,8 @@ Determine the agent product and the exact model from the session. Write `Unknown
 
 Post the handoff on the lead with `comment`, following [references/handoff.md](references/handoff.md) and reusing an equivalent existing comment, and a pointer comment on each rider. Read the comments back.
 
+The handoff's `### Tracker follow-ups` carries the approved plan's follow-ups and any the user decided since. This skill makes none of them. List them there even when the final report also asks about them: the handoff is where finish-ticket finds them.
+
 When `## States` names tracker automation that moves tickets on pull request events, check whether it moved any member before the gate passed, and report it if so.
 
 When a push, the pull request, a comment or a transition fails, report the exact partial state. On a retry, reuse every artifact that already exists instead of creating duplicate pull requests or comments.
