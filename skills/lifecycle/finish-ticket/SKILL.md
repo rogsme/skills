@@ -145,7 +145,7 @@ A ticket the merge unblocked can sit in `blocked`. When every blocker its `## Bl
 
 ## 5. Report
 
-Return the pull request URL, the reviewed head, the merge commit, the verification evidence, the tracker result for every member, and any remaining cleanup. Then name the tickets the merge unblocked on one line, `Unblocked: ACM-15, ACM-16`, or `Unblocked: none`, and end with `Status: DONE`. When the tracker cannot answer for them after the merge, write `Unblocked: unknown` and the reason instead; the merge still ends with `Status: DONE`.
+Return the pull request URL, the reviewed head, the merge commit, the verification evidence, the tracker result for every member, and any remaining cleanup. Then name the tickets the merge unblocked on one line, `Unblocked: ACM-15, ACM-16`, or `Unblocked: none`, and end with `Status: DONE`. The line holds only ticket ids, separated by commas: one per ticket, and a bundle by its lead's id alone. A program offers to start every id on it, so a note about a ticket, and every ticket that is still blocked, goes in the report above the line, never on it. When the tracker cannot answer for them after the merge, give the reason above the line and write `Unblocked: unknown`; the merge still ends with `Status: DONE`.
 
 Never delete branches, remove the active worktree, or switch checkouts. Report the worktree's path for the user to remove when they are ready.
 

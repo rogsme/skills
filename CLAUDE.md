@@ -104,7 +104,7 @@ The lifecycle skills hand off through these lines. A skill restates the lines it
 | `Status: BLOCKED_FOR_SYNC` | review-pr, verify-pr, finish-ticket | address-pr-review, or a fresh review |
 | `Status: HUMAN_QA_FAILED` | finish-ticket | address-pr-review |
 | `Status: BLOCKED_POST_MERGE`, `Status: DONE` | finish-ticket | the user |
-| `Unblocked:` with the ticket ids, or `none` | finish-ticket, right before `Status: DONE` | the user starts the tickets it names |
+| `Unblocked:` with only the ticket ids, a bundle by its lead, or `none` | finish-ticket, right before `Status: DONE` | the user starts the tickets it names |
 | `Status: BLOCKED`, followed by a `Reason:` line | any lifecycle skill | the user |
 
 ## Ticket states
