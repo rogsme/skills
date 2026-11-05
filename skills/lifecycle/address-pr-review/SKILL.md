@@ -135,7 +135,7 @@ After the fixes, run the format command and commit any intended changes it makes
 
 Confirm the worktree is clean apart from explicitly unrelated pre-existing files. Immediately before pushing, fetch and require `<remote>/<base>` to still be an ancestor of `HEAD`; when the base moved (`## CI gate` names the automation that moves it), sync again as in step 3 first.
 
-`push` before replying, so the round's fixes and any merge from step 3 reach the pull request together. Never force-push. Record the new head SHA and wait with `ci`, always through that operation rather than an invented alternative. Require successful gate checks for that exact SHA and a mergeable pull request, applying the path-filter rule in `## CI gate`. Fix deterministic failures inside the round and repeat; report infrastructure, permission or unavailable-service failures with `Status: BLOCKED`, the check URL and the exact partial state.
+`push` before replying, so the round's fixes and any merge from step 3 reach the pull request together. Never force-push. Record the new head SHA and wait with `ci`, always through that operation rather than an invented alternative. Require successful gate checks for that exact SHA and a mergeable pull request, applying the path-filter rule in `## CI gate`. Fix deterministic failures inside the round, as one batch per head: read every failing gate check of the head, commit the fixes for all of them, then push once and wait again; report infrastructure, permission or unavailable-service failures with `Status: BLOCKED`, the check URL and the exact partial state.
 
 ## 7. Reply to every unanswered comment
 
