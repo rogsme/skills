@@ -56,7 +56,7 @@ Notes: {{FILL: environment notes, such as services a check needs, or "none"}}.
 
 A branch takes the base by merging it: `git pull --no-edit <remote> <base>`, with the remote and base from `forge.md`. Never rebase a published branch and never force-push. Immediately before every push, fetch and require `<remote>/<base>` to be an ancestor of `HEAD`; when it is not, merge again first.
 
-Notes: {{FILL: project-specific sync notes, such as a step to rerun after dependencies change, or "none"}}.
+Notes: {{FILL: project-specific sync notes, such as a step to rerun after dependencies change, or merged changes that keep the last passing verification together with the command that proves it still covers `HEAD`, or "none"}}.
 
 ## Project rules
 
