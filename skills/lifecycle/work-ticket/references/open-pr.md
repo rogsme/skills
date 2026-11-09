@@ -7,7 +7,7 @@ The create-pr skill publishes; this file holds what the lifecycle adds around it
 Run this right before every push: before the handover below, and before each push in step 8 of the skill. The gate passes when `HEAD` contains the freshly fetched base and any copy of the branch already on the remote, so the pull request is ready for review the moment it opens.
 
 1. Fetch `<remote>`. Record the SHA of `<remote>/<base>`, and of `<remote>/<branch>` when the remote has the branch.
-2. When `<remote>/<base>` is not an ancestor of `HEAD`, merge it and rerun the complete verification as step 5 of the skill describes. Keep or retake the browser-pass captures as `browser-pass.md` `## Procedure` allows. Then fetch again and repeat until the base holds still; `## CI gate` names the automation that moves it.
+2. When `HEAD` does not contain `<remote>/<base>` (the base is an ancestor of `HEAD`, or every change it made since their merge base is under the generated paths `## CI gate` names), merge it and rerun the complete verification as step 5 of the skill describes. Keep or retake the browser-pass captures as `browser-pass.md` `## Procedure` allows. Then fetch again and repeat until the base holds still; `## CI gate` names the automation that moves it.
 3. When `<remote>/<branch>` exists and is not an ancestor of `HEAD`, the remote branch holds commits this checkout lacks: stop with `Status: BLOCKED`, naming both SHAs. Never force-push.
 
 ## Before the handover

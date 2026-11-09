@@ -74,7 +74,7 @@ When CI review is on, the reviewer `## CI review` names reviews every push, and 
 2. Resolve the pull request: an explicitly given number with `read-pr`, or the open pull request for the current branch with `find-pr`, verifying that its head is the current branch.
 3. Verify that its base is the base branch `## Forge` names.
 4. Read its metadata, body, commits, exact head SHA, checks, every feedback channel with `feedback`, and the changed files.
-5. Fetch the base, record its SHA, and require it to be an ancestor of the head. That proves the reviewed head contains the current base, rather than relying on a stale branch that merely does not conflict.
+5. Fetch the base, record its SHA, and require the head to contain it: the base is an ancestor of the head, or every change it made since their merge base is under the generated paths `## CI gate` names. That proves the reviewed head contains the current base, rather than relying on a stale branch that merely does not conflict.
 6. Wait for the forge to compute mergeability, then require a mergeable pull request and a passing gate for the exact head per `## CI gate`. When the diff touches none of the path filters, no checks is legitimate: confirm it from the changed files and note it in the summary. An unknown mergeability is not proof of a conflict. When checks are stale, pending or failing, or the branch conflicts with the base, post nothing and end with `Status: BLOCKED_FOR_SYNC`.
 
 Never treat a green check from an older commit as evidence for the current head.
@@ -150,7 +150,7 @@ Use this mode only when the user explicitly asks for a draft, a preview or an an
 
 For a normal review request, posting is authorized by the request itself; do not ask for a second confirmation.
 
-Before posting, refresh the head, the diff, the checks, mergeability and the feedback, and re-read every ticket with its comments. Fetch the base again: when its SHA changed, or it is no longer an ancestor of the unchanged head, post nothing and end with `Status: BLOCKED_FOR_SYNC`. Revalidate each finding and drop stale or duplicate ones.
+Before posting, refresh the head, the diff, the checks, mergeability and the feedback, and re-read every ticket with its comments. Fetch the base again: when the unchanged head no longer contains it, post nothing and end with `Status: BLOCKED_FOR_SYNC`; when it moved only in the generated paths, name the new base SHA as the included base. Revalidate each finding and drop stale or duplicate ones.
 
 Post one review with `post-review`, each finding anchored to its exact changed line in the new file version. A finding that cannot be anchored goes into the summary as `path:line`. Write the summary as [references/summary.md](references/summary.md) describes: a freshly derived `## Review brief`, then the lines naming the exact reviewed head SHA, the included base SHA, every ticket reviewed against, and the verdict.
 
