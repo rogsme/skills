@@ -91,7 +91,7 @@ Build a requirements ledger from the acceptance criteria, the scope, the approve
 Every run syncs before it collects feedback, including a run after a review or a merge attempt that stopped with `Status: BLOCKED_FOR_SYNC`.
 
 1. Confirm the worktree is clean apart from explicitly unrelated pre-existing files.
-2. Fetch the base and read the pull request with `read-pr`. When `<remote>/<base>` is an ancestor of `HEAD` and the pull request does not conflict, the branch is up to date: continue with step 4.
+2. Fetch the base and read the pull request with `read-pr`. When `HEAD` contains `<remote>/<base>` (the base is an ancestor of `HEAD`, or every change it made since their merge base is under the generated paths `## CI gate` names) and the pull request does not conflict, the branch is up to date: continue with step 4.
 3. Otherwise sync per `## Sync`: merge the base. When the merge stops on conflicts, resolve each conflict from what both sides meant, keeping it a merge, staging only resolved paths and asking about any hunk that decides product behavior; then conclude it with `git commit --no-edit`.
 4. Rerun the focused checks for the code the merge changed. Commit nothing beyond the merge.
 
@@ -105,7 +105,7 @@ A reply this skill posted starts with one of the four prefixes in step 7. Treat 
 
 When there is no unanswered feedback:
 
-- If step 3 merged the base, finish the sync. Fetch and require the base to still be an ancestor of `HEAD`, syncing again as in step 3 when it moved, then `push` and wait with `ci` for the new head. Require green gate checks and a mergeable pull request. Refresh the `## Review brief` in the body with `edit-pr`, pinned to the new head and base SHAs. Post one conversation comment only when the merge changed what the human verification covers. End with `Status: READY_FOR_REVIEW`.
+- If step 3 merged the base, finish the sync. Fetch and require `HEAD` to still contain the base, syncing again as in step 3 when it does not, then `push` and wait with `ci` for the new head. Require green gate checks and a mergeable pull request. Refresh the `## Review brief` in the body with `edit-pr`, pinned to the new head and base SHAs. Post one conversation comment only when the merge changed what the human verification covers. End with `Status: READY_FOR_REVIEW`.
 - Otherwise report that the branch already contains the base and no feedback is waiting, and stop without creating commits or comments, ending with `Status: READY_FOR_REVIEW`: the pull request is still waiting for review.
 
 ## 5. Validate each comment
@@ -133,7 +133,7 @@ When the browser pass is on and an accepted fix changes what a page shows, rerun
 
 After the fixes, run the format command and commit any intended changes it makes, then run the focused checks that prove the fixes. Reuse the pull request's CI gate instead of rerunning the full check locally.
 
-Confirm the worktree is clean apart from explicitly unrelated pre-existing files. Immediately before pushing, fetch and require `<remote>/<base>` to still be an ancestor of `HEAD`; when the base moved (`## CI gate` names the automation that moves it), sync again as in step 3 first.
+Confirm the worktree is clean apart from explicitly unrelated pre-existing files. Immediately before pushing, fetch and require `HEAD` to still contain `<remote>/<base>`; when it does not (`## CI gate` names the automation that moves the base), sync again as in step 3 first.
 
 `push` before replying, so the round's fixes and any merge from step 3 reach the pull request together. Never force-push. Record the new head SHA and wait with `ci`, always through that operation rather than an invented alternative. Require successful gate checks for that exact SHA and a mergeable pull request, applying the path-filter rule in `## CI gate`. Fix deterministic failures inside the round, as one batch per head: read every failing gate check of the head, commit the fixes for all of them, then push once and wait again; report infrastructure, permission or unavailable-service failures with `Status: BLOCKED`, the check URL and the exact partial state.
 

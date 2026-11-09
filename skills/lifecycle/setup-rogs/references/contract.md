@@ -76,7 +76,7 @@ Tracker operations:
 |---|---|
 | `## Forge` | Kind, host, repository, remote name, CLI with the flags that pin host and repository, base branch and how to re-read it, merge style (`merge` or `squash`) and how to re-read it, and the rules for running the CLI non-interactively. |
 | `## Operations` | The H3 operations below. |
-| `## CI gate` | Which checks gate a head and which are advisory (automated reviewers, documentation jobs); the path filters that decide whether checks run at all; what "no CI" means here; any automation that moves the base branch on its own. |
+| `## CI gate` | Which checks gate a head and which are advisory (automated reviewers, documentation jobs); the path filters that decide whether checks run at all; what "no CI" means here; any automation that moves the base branch on its own; the generated paths only that automation writes, under which a base change still leaves a head containing the base (a `## CI gate` without the `Generated paths:` line has none). |
 | `## Pull requests` | Where the body format lives (the repository's template on the base branch, or `docs/agents/pull-request.md`), the headings every body must contain, the title format, the related-work line format, the closing-keyword policy, the draft policy, and `Assignee:` (a login, or `none`). |
 | `## Identity limits` | What the account the skills run as cannot do, such as approving its own pull request. |
 
@@ -108,7 +108,7 @@ Forge operations:
 | `## Worktrees` | The rule (branch name equals the worktree directory name equals the lead ticket id), where worktrees usually live, and who creates them (the user, never a skill). |
 | `## Verification` | The format command, the full check, focused checks per area, the areas that are test-first, hook behavior, and any environment notes. A command the project lacks is written as `not configured`. |
 | `## Commits` | Paths never committed, commit rules beyond the defaults, and the attribution policy. |
-| `## Sync` | How a branch takes the base (a merge), the ancestor check before every push, and project notes about syncing. |
+| `## Sync` | How a branch takes the base (a merge), the check that `HEAD` contains the base before every push, and project notes about syncing. |
 | `## Project rules` | Rule files per area, reference implementations and the terms for using them, and data boundaries. |
 | `## Review` | Project invariants a review checks, house review standards, and the commands for focused reproduction. |
 | `## Human verification` | The standard every human verification procedure meets. |

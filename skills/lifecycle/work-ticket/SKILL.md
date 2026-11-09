@@ -149,7 +149,7 @@ Never claim that a command, surface or platform was tested when it was not, and 
 
 Apply `## CI gate`. When the diff touches none of its path filters, no checks is a pass: confirm it from the changed files and state it in the handoff instead of a CI link. In no-CI mode, say "no CI configured".
 
-Otherwise record the pull request's head SHA and wait with `ci`. Refresh the pull request afterwards and require the successful gate checks to belong to that exact SHA. Fetch the base, record its SHA, and require it to be an ancestor of the head, so the checks cover the current base plus the change.
+Otherwise record the pull request's head SHA and wait with `ci`. Refresh the pull request afterwards and require the successful gate checks to belong to that exact SHA. Fetch the base, record its SHA, and require the head to contain it (the base is an ancestor of the head, or every change it made since their merge base is under the generated paths `## CI gate` names), so the checks cover the current base plus the change.
 
 - Fix deterministic failures yourself, as one batch per head: read every failing gate check of the head, reproduce each with the smallest relevant local command, and commit the fixes through "commit". Then pass the sync gate in [references/open-pr.md](references/open-pr.md), `push` once, and wait again for the new head. When the failing output does not show the cause, call the Skill tool with "diagnosing-bugs" before you change code.
 - Report infrastructure, permission, quota or unavailable-service failures with `Status: BLOCKED`, the check URL and the exact partial state. Never ask the user to diagnose ordinary code failures.
