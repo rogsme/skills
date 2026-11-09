@@ -106,7 +106,7 @@ Capability: Supported
    gh pr checks <number> --repo <host>/<repo> --watch --interval 30
    ```
 
-   It exits 0 when every check passed and 1 when one failed. A long wait outlives a tool timeout: run it in the background, or run it again until it exits on its own; a timeout is not a result. When no check has registered yet, it stops at once with "no checks reported". Right after a push, wait a minute and run it again before treating that as the answer.
+   It exits 0 when every check passed and 1 when one failed. A long wait outlives a tool timeout: run it in the background, or run it again until it exits on its own. A timeout is not a result, and neither is a wait the harness stopped for its own reasons, such as low memory: run it again. When no check has registered yet, it stops at once with "no checks reported". Right after a push, wait a minute and run it again before treating that as the answer.
 3. Read the results of that exact SHA, every page:
 
    ```bash
