@@ -10,7 +10,7 @@ metadata:
 
 Implement the approved plan through a verified pull request and a tracker handoff. The work is complete only when the pull request exists, its exact head passes the CI gate, and every ticket reads `in-review`; a local commit without the pull request is a partial state, not a finish. The branch reaches the remote once, when create-pr publishes the pull request in step 7; after that, only a CI fix or a sync in step 8 pushes it, so the project's pre-push hook runs once for each head CI has to test.
 
-This skill grants permission to create the commits, push the branch and open the pull request the workflow needs. Its only tracker writes are the ones listed here: the plan comment with the `in-progress` transition of any member not there yet, the capture attachments, the `in-review` transition with the handoff comment, and the moves into and out of `blocked` with their comments and relations ([Blocked tickets](#blocked-tickets)). The user's approval of the plan lifts any earlier instruction that kept the tracker read-only for these writes; make them without asking again.
+This skill grants permission to create the commits, push the branch and open the pull request the workflow needs. Its only tracker writes are the ones listed here: the plan comment with the `in-progress` transition of any member not there yet, the capture attachments, the `in-review` transition with the handoff comment, the follow-up comments on other tickets that the approved plan or a later decision of the user lists ([Hand off in the tracker](#9-hand-off-in-the-tracker)), and the moves into and out of `blocked` with their comments and relations ([Blocked tickets](#blocked-tickets)). The user's approval of the plan lifts any earlier instruction that kept the tracker read-only for these writes; make them without asking again.
 
 When bundles are on, every rule that names "the ticket" applies to each member: the full comments go on the lead, each rider gets a pointer comment naming the lead and the pull request, and every member makes each transition together.
 
@@ -167,7 +167,7 @@ Determine the agent product and the exact model from the session. Write `Unknown
 
 Post the handoff on the lead with `comment`, following [references/handoff.md](references/handoff.md) and reusing an equivalent existing comment, and a pointer comment on each rider. Read the comments back.
 
-The handoff's `### Tracker follow-ups` carries the approved plan's follow-ups and any the user decided since. This skill makes none of them. List them there even when the final report also asks about them: the handoff is where finish-ticket finds them.
+The handoff's `### Tracker follow-ups` carries the approved plan's follow-ups and any the user decided since. A follow-up that is only a comment on an existing ticket, such as a note to work in flight there about a coupling this change creates, is this skill's to make: post it with `comment` before the handoff, read it back, and list it with its link. Make no other follow-up: a ticket to create, a relation to change or a scope to widen stays listed for finish-ticket, which reports the ones still open. List every follow-up there even when the final report also asks about it: the handoff is where finish-ticket finds them.
 
 When `## States` names tracker automation that moves tickets on pull request events, check whether it moved any member before the gate passed, and report it if so.
 

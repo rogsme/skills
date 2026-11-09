@@ -98,6 +98,7 @@ Create the smallest coherent vertical tickets that can each run in an independen
 - Name genuine prerequisites in the description, then add real blocked-by relations once ids exist.
 - Keep coordination notes separate from functional dependencies.
 - Apply the splitting rules in `## Ticket conventions`.
+- Size every ticket from the audit: count the modules whose behavior changes, the migrations and the documents to update. When its changes fall into groups that could each merge alone and leave the base working, such as moving the readers of something before removing it, split along those groups, each blocked by the one before. A ticket that is itself the product of a split gets the same count.
 
 ## 6. Assign priority and labels
 
@@ -113,7 +114,7 @@ Title each ticket per `## Ticket conventions`, never with an id: the tracker ass
 
 ## 8. Preview and gate creation
 
-Present the breakdown as a numbered list. For each ticket show the title, priority, labels, project, assignee or `Unassigned`, the tickets that block it, the state it starts in, what it delivers, whether it is conditional, and its model routing when that is on. Never invent ids.
+Present the breakdown as a numbered list. For each ticket show the title, priority, labels, project, assignee or `Unassigned`, the tickets that block it, the state it starts in, what it delivers, its size from the audit, whether it is conditional, and its model routing when that is on. Never invent ids.
 
 Ask whether the granularity is right, whether each blocking edge is real, and whether any ticket should merge or split. Iterate until the user approves. While waiting, end with `Status: AWAITING_CREATE_APPROVAL`.
 
