@@ -118,7 +118,7 @@ When the taste pass is on, call the Skill tool with "simplify-branch" once the l
 2. Run the full check.
 3. Confirm every intended change is committed and nothing unrelated is staged. Stop before syncing when the worktree is not safely clean.
 4. Sync per `## Sync`: merge the base. When the merge stops on conflicts, resolve each conflict from what both sides meant, under these constraints: this is a merge and stays one; stage only resolved paths; ask the user about any hunk that decides product behavior. Then conclude the merge with `git commit --no-edit` and confirm it in `git log`.
-5. When the sync changed the branch, rerun the complete verification.
+5. When the sync changed the branch, rerun the complete verification, unless `## Sync` says the merged changes keep the last run.
 
 The finalized branch stays local. Its first push is create-pr's, in step 7.
 
@@ -154,7 +154,7 @@ Otherwise record the pull request's head SHA and wait with `ci`. Refresh the pul
 - Fix deterministic failures yourself, as one batch per head: read every failing gate check of the head, reproduce each with the smallest relevant local command, and commit the fixes through "commit". Then pass the sync gate in [references/open-pr.md](references/open-pr.md), `push` once, and wait again for the new head. When the failing output does not show the cause, call the Skill tool with "diagnosing-bugs" before you change code.
 - Report infrastructure, permission, quota or unavailable-service failures with `Status: BLOCKED`, the check URL and the exact partial state. Never ask the user to diagnose ordinary code failures.
 - A wait the harness stopped, for low memory or any other reason of its own, is no CI result and no reason to stop: start `ci` again.
-- Require the pull request to be mergeable before the handoff. When the base advanced or the pull request conflicts, pass the sync gate, which merges the base as in step 5 and reruns the verification, then push the merge together with any pending fixes. Never force-push. Wait for the new head's checks.
+- Require the pull request to be mergeable before the handoff. When the base advanced or the pull request conflicts, pass the sync gate, which merges the base and reruns the verification as in step 5, then push the merge together with any pending fixes. Never force-push. Wait for the new head's checks.
 
 Never move a ticket to `in-review` while the current head's gate is pending, failing or stale.
 
