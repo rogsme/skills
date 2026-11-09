@@ -133,7 +133,7 @@ After the overview, report:
 - Remaining questions, blockers and explicitly unverified surfaces.
 - Tracker follow-ups: every tracker change beyond the bundle's own transitions that the plan or the user's decisions call for, such as a relation to change, a ticket to create or another ticket's scope to widen, one line each, or "None". Keep them out of the ordered plan: work-ticket posts the ones that are only a comment on an existing ticket, carries every one in its handoff, and finish-ticket reports the ones still open.
 - An ordered implementation plan naming the affected areas, coupled contracts, tests and required verification, using the commands in `## Verification` and saying so plainly where one is `not configured`. Every acceptance criterion of every member maps to a plan step.
-- The seams under test, each with one line on what it catches and what it misses. In the test-first areas `## Verification` lists, these are the agreement `tdd` works from during implementation.
+- The seams under test, each with one line on what it catches and what it misses. In the test-first areas `## Verification` lists, these are the agreement `tdd` works from during implementation. When the change walks input whose size the product caps (rows, files, items), one seam runs at that cap with a time budget, so a quadratic pass fails a test rather than a review.
 - When the browser pass is on, the pass the work phase will run per `browser-pass.md`: which instance, which criteria it walks, the negative check, and which flows get a video; or the one-line reason the change has no user-visible surface.
 - When model routing is on, a `Model:` line naming the model the work should run on, and whether this session runs on it.
 
