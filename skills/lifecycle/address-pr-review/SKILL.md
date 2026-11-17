@@ -1,6 +1,6 @@
 ---
 name: address-pr-review
-description: "First bring the current branch's pull request up to date with its base, then verify and address its review feedback: fix the valid findings at their root cause, push back with evidence on the rest, push, get green CI on the exact head, and reply to every comment, at most two rounds per run and never resolving threads. Use when the user says \"address the review\", \"fix the PR comments\", \"I added comments to the PR\", or \"sync the PR with the base\"."
+description: "First bring the current branch's pull request up to date with its base, then verify and address its review feedback: fix the valid findings at their root cause, push back with evidence on the rest, push, get green CI on the exact head, and reply to every comment, at most two rounds per run and never resolving threads. Works on a pull request with no ticket, such as a retrospective's. Use when the user says \"address the review\", \"fix the PR comments\", \"I added comments to the PR\", or \"sync the PR with the base\"."
 license: MIT
 metadata:
   rogs-skills/contract: "1"
@@ -70,7 +70,7 @@ When the request says the run is autonomous, follow [Autonomous runs](#autonomou
 
 ## 1. Verify the branch and the pull request
 
-1. Read the current branch and require the checkout directory's basename to match it (`## Worktrees`).
+1. Read the current branch and require the checkout directory's basename to match it (`## Worktrees`). For a pull request that delivers no ticket (step 2), that match is the whole check.
 2. Find the open pull request for that exact branch with `find-pr`. Stop gracefully when none exists.
 3. Verify that the pull request's head is the current branch and its base is the base `## Forge` names.
 4. Read `git status --short --branch`. Never overwrite, revert, stage or commit unrelated existing changes.
@@ -80,7 +80,11 @@ Never edit from the wrong worktree, and never create a replacement pull request.
 
 ## 2. Load the requirements
 
-Derive the pull request's tickets: the lead is the head branch when it matches the id format in `## Tracker`, otherwise the first id in the title. When bundles are on, the riders are the other ids in the title and the related-work lines, checked against the bundle the tracker records (`## Bundles`). Stop and ask when they disagree or no id exists; never fuzzy-match the title.
+A pull request delivers no ticket when the first line of its `## Related work` section starts with `No ticket`. The ticket ids in its title and body then name its subject, not tickets it delivers: load no ticket, write nothing to the tracker, and build the requirements from the pull request body.
+
+Treat a pull request whose branch, title and body hold no ticket id the same way, and say so in the report. For such a pull request, skip the derivation and the loads below: the ledger comes from the body's summary, scope, approved items and decisions, and an accepted finding that waits on a blocker stops the run with `Status: BLOCKED` and a `Reason:` that names the blocker, in place of [Blocked tickets](#blocked-tickets).
+
+Otherwise derive the pull request's tickets: the lead is the head branch when it matches the id format in `## Tracker`, otherwise the first id in the title. When bundles are on, the riders are the other ids in the title and the related-work lines, checked against the bundle the tracker records (`## Bundles`). Stop and ask when they disagree; never fuzzy-match the title.
 
 `load` every member in full: relations, every comment, and the current state of every blocking ticket. Verify the team or project, and request more blocker detail only when its scope affects the feedback. Expect every member in `in-review`, or in `blocked` as [Blocked tickets](#blocked-tickets) describes; report and ask before editing when one is in another state. Make no other transition, and never repair tracker state.
 
@@ -139,7 +143,7 @@ Confirm the worktree is clean apart from explicitly unrelated pre-existing files
 
 ## 7. Reply to every unanswered comment
 
-After pushing, refresh the feedback and re-read every ticket with its relations, state and comments, so new feedback is not missed, existing replies are not duplicated, and every classification still matches the current requirements.
+After pushing, refresh the feedback and re-read every ticket (none for a pull request that delivers no ticket) with its relations, state and comments, so new feedback is not missed, existing replies are not duplicated, and every classification still matches the current requirements.
 
 Reply directly to every previously unanswered comment: `reply` on the original comment of each inline thread, and `comment` for review-body notes and conversation comments, quoting the point you answer. One generic summary never replaces the individual replies. Start each reply with exactly one of **Accepted**, **Partially accepted**, **Rejected** or **No code change**, then give:
 
@@ -163,7 +167,7 @@ Confirm all of these before the round counts as done:
 - The successful checks belong to the current head, and the pull request is mergeable.
 - Every previously unanswered inline, review-body and conversation point received exactly one direct reply, and a conversation comment exists only when human verification changed.
 - This skill resolved no thread.
-- Every member was read again, still belongs to the configured team or project, and is still `in-review`, or `blocked` by this run, and no tracker write other than replacement captures and the blocked moves happened. Report state drift instead of correcting it.
+- Every member was read again, still belongs to the configured team or project, and is still `in-review`, or `blocked` by this run, and no tracker write other than replacement captures and the blocked moves happened. Report state drift instead of correcting it. A pull request that delivers no ticket has no members and no tracker writes.
 
 ## 9. Round limit: two, then stop
 

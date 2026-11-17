@@ -103,6 +103,29 @@ test("review-pr and finish-ticket define a clean merge of the base in the same w
   assert.equal(await definition("finish-ticket"), await definition("review-pr"));
 });
 
+test("retro, combine-retros, address-pr-review and review-pr define a pull request with no ticket in the same words", async () => {
+  const definition = async (skill) => {
+    const text = await readFile(path.join(root, `${skill}/SKILL.md`), "utf8");
+    const start = text.indexOf("A pull request delivers no ticket when");
+    assert.ok(start >= 0, `${skill} no longer defines a pull request with no ticket`);
+    return text.slice(start, text.indexOf("\n", start));
+  };
+  const skills = ["engineering/retro", "engineering/combine-retros", "lifecycle/address-pr-review", "lifecycle/review-pr"];
+  const [first, ...rest] = await Promise.all(skills.map(definition));
+  for (const other of rest) assert.equal(other, first);
+});
+
+test("retro and combine-retros share the retro branches and pull requests section", async () => {
+  const section = async (skill) => {
+    const text = await readFile(path.join(root, `engineering/${skill}/SKILL.md`), "utf8");
+    const begin = text.indexOf("\n## Retro branches and pull requests\n");
+    assert.ok(begin >= 0, `${skill} has no retro branches and pull requests section`);
+    const end = text.indexOf("\n## ", begin + 1);
+    return text.slice(begin, end < 0 ? undefined : end).trimEnd();
+  };
+  assert.equal(await section("combine-retros"), await section("retro"));
+});
+
 test("each skill moves a ticket as soon as its new state is true", async () => {
   const read = (name) => readFile(path.join(root, `lifecycle/${name}/SKILL.md`), "utf8");
   const [work, finish] = await Promise.all([read("work-ticket"), read("finish-ticket")]);

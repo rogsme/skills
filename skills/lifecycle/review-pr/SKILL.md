@@ -81,7 +81,11 @@ Never treat a green check from an older commit as evidence for the current head.
 
 ## 2. Load the requirements
 
-Derive the pull request's tickets: the lead is the head branch when it matches the id format in `## Tracker`, otherwise the first id in the title. When bundles are on, the riders are the other ids in the title and the related-work lines, checked against the bundle the tracker records (`## Bundles`). Stop when they disagree or no id exists; never fuzzy-match the title.
+A pull request delivers no ticket when the first line of its `## Related work` section starts with `No ticket`. The ticket ids in its title and body then name its subject, not tickets it delivers: load no ticket, write nothing to the tracker, and build the requirements from the pull request body.
+
+For such a pull request, skip the derivation and the loads below: the ledger comes from the body's summary, scope, approved items and decisions, and every check below that names an acceptance criterion or a ticket uses that ledger.
+
+Otherwise derive the pull request's tickets: the lead is the head branch when it matches the id format in `## Tracker`, otherwise the first id in the title. When bundles are on, the riders are the other ids in the title and the related-work lines, checked against the bundle the tracker records (`## Bundles`). Stop when they disagree or no id exists; never fuzzy-match the title.
 
 `load` every member in full: relations, blocker states and every comment. Verify the team or project, and expect every member in `in-review`. Build one requirements ledger, grouped by ticket, from:
 
@@ -150,7 +154,7 @@ Use this mode only when the user explicitly asks for a draft, a preview or an an
 
 For a normal review request, posting is authorized by the request itself; do not ask for a second confirmation.
 
-Before posting, refresh the head, the diff, the checks, mergeability and the feedback, and re-read every ticket with its comments. Fetch the base again: when the unchanged head no longer contains it, post nothing and end with `Status: BLOCKED_FOR_SYNC`; when it moved only in the generated paths, name the new base SHA as the included base. Revalidate each finding and drop stale or duplicate ones.
+Before posting, refresh the head, the diff, the checks, mergeability and the feedback, and re-read every ticket (none for a pull request that delivers no ticket) with its comments. Fetch the base again: when the unchanged head no longer contains it, post nothing and end with `Status: BLOCKED_FOR_SYNC`; when it moved only in the generated paths, name the new base SHA as the included base. Revalidate each finding and drop stale or duplicate ones.
 
 Post one review with `post-review`, each finding anchored to its exact changed line in the new file version. A finding that cannot be anchored goes into the summary as `path:line`. Write the summary as [references/summary.md](references/summary.md) describes: a freshly derived `## Review brief`, then the lines naming the exact reviewed head SHA, the included base SHA, every ticket reviewed against, and the verdict.
 

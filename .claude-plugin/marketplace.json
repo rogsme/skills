@@ -12,6 +12,7 @@
       "description": "Skills that stand on their own, including the ones the lifecycle calls.",
       "skills": [
         "./skills/engineering/codebase-design",
+        "./skills/engineering/combine-retros",
         "./skills/engineering/commit",
         "./skills/engineering/create-pr",
         "./skills/engineering/diagnosing-bugs",
