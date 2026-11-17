@@ -124,6 +124,7 @@ User-invoked:
 - [improve-codebase-architecture](skills/engineering/improve-codebase-architecture/SKILL.md): scan the codebase for shallow modules, present the deepening opportunities as a visual HTML report, then grill through the one you pick.
 - [grill-me](skills/engineering/grill-me/SKILL.md): grill a plan or design in rounds until every decision is settled, without writing any docs.
 - [retro](skills/engineering/retro/SKILL.md): run a retrospective on every coding session in a worktree, across `/new` and across harnesses, and suggest changes to the agent's environment (navigation pointers, automated checks, review standards, tool economy), most severe first; then apply the ones you approve in a `retro-<ticket id>` worktree, open a `Retro:` pull request and address its review.
+- [combine-retros](skills/engineering/combine-retros/SKILL.md): merge every open retro pull request into one, reconcile the overlaps, comment on the sources, address the review, and offer to remove merged retro worktrees.
 
 Model-invoked:
 
