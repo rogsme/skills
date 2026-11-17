@@ -114,11 +114,10 @@ When the taste pass is on, call the Skill tool with "simplify-branch" once the l
 
 ## 5. Finalize the branch
 
-1. Run the format command, inspect what it changed, and commit those changes with their logical change.
-2. Run the full check.
-3. Confirm every intended change is committed and nothing unrelated is staged. Stop before syncing when the worktree is not safely clean.
-4. Sync per `## Sync`: merge the base. When the merge stops on conflicts, resolve each conflict from what both sides meant, under these constraints: this is a merge and stays one; stage only resolved paths; ask the user about any hunk that decides product behavior. Then conclude the merge with `git commit --no-edit` and confirm it in `git log`.
-5. When the sync changed the branch, rerun the complete verification, unless `## Sync` says the merged changes keep the last run.
+1. Run the format command, inspect what it changed, and commit those changes with their logical change. Confirm every intended change is committed and nothing unrelated is staged. Stop before syncing when the worktree is not safely clean.
+2. Sync per `## Sync`: merge the base. When the merge stops on conflicts, resolve each conflict from what both sides meant, under these constraints: this is a merge and stays one; stage only resolved paths; ask the user about any hunk that decides product behavior. Then conclude the merge with `git commit --no-edit` and confirm it in `git log`.
+3. When the merge brought a change that the `## Sync` notes give a step for, such as a changed lockfile, run that step before any check.
+4. Run the full check on the merged head. When a full check already passed on this branch and `## Sync` says the changes merged since keep that run, run the command it names to prove the run still covers `HEAD` instead.
 
 The finalized branch stays local. Its first push is create-pr's, in step 7.
 
