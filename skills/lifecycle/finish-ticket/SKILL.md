@@ -8,7 +8,7 @@ metadata:
 
 # Finish a reviewed ticket
 
-Close the lifecycle only after explicit merge authorization. This skill owns one merge and the matching tracker completion. It never implements fixes and never infers that manual testing happened. Its only writes are the merge, a conversation comment recording a failed human verification step, the completion comments, the move of each member from `in-review` to `done`, and moving the tickets the merge unblocked out of `blocked`, with their `## Unblocked` comments.
+Close the lifecycle only after explicit merge authorization. This skill owns one merge and the matching tracker completion. It never implements fixes and never infers that manual testing happened. Its only writes are the merge, a conversation comment recording a failed human verification step, a conversation comment recording the user's answers when a run stops before the merge, the completion comments, the move of each member from `in-review` to `done`, and moving the tickets the merge unblocked out of `blocked`, with their `## Unblocked` comments.
 
 ## 0. Configuration preflight
 
@@ -98,6 +98,21 @@ A confirmation counts for the head it names, or, when it names none, for the hea
 Fetch the base and require its SHA to equal the base SHA in the final verdict; after the CI reviewer's CLEAR or the user's acceptance, require it to be an ancestor of the reviewed head. A base that moved after the review only in the generated paths `## CI gate` names still counts: the reviewed head contains it. When the base moved after the review in any other way, stop with `Status: BLOCKED_FOR_SYNC`: even a clean merge would produce an integration nobody reviewed. Never re-sync, re-verify or re-review from this skill, even when the gap looks mechanical; `address-pr-review` brings the branch up to date, and a fresh review follows.
 
 When the pull request is already merged, this run is recovering from a partial earlier one. Load the latest `Verdict: READY_FOR_HUMAN` summary, or with CI review on the CI reviewer's latest CLEAR, or the user's acceptance that held for the merged head, reuse its reviewed head and base and the recorded merge commit, skip the merge, and continue with the verification in step 3. Stop when that review summary is absent. Never create a second pull request or a second merge. Recovery does not waive human QA: require the same numbered procedure, and an explicit pass or reasoned waiver for every step, before completing any ticket.
+
+### Answers that outlive a stop
+
+When this run stops before the merge, for any reason, after the user answered one or more of its questions, record those answers so the next run reuses them. Post one conversation comment with `comment`, and read it back:
+
+```markdown
+## Merge answers
+
+Answered head: `{the head SHA the user answered for}`
+
+- Step {number}: {passed, or waived: the reason}
+- {each other question, in a few words}: {the user's answer, in their words}
+```
+
+Before asking the user anything, read the newest `## Merge answers` comment that the account your forge operations use wrote. Its answers count as given for its `Answered head:`, and for a later head under the carry-over rule a confirmation follows: a step answer holds while the final review summary asks the same step, matched by action and expected result. Ask only what it leaves open. It never authorizes the merge: that still comes from this run's request. The completion comment's `### Human verification` cites it for each step it confirmed.
 
 ## 3. Merge and verify
 
